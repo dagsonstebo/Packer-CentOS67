@@ -1,0 +1,76 @@
+{
+  "description": "DS / Vagrant / CentOS 6.7",
+  "_comment": "This builds a CentOS67 box from scratch using the vmware-iso provider.",
+  "push": {
+    "name": "",
+    "vcs": false,
+    "exclude": [
+      ".git",
+      ".DS_Store"
+    ]
+  },
+  "variables": {
+    "atlas_username": "{{env `ATLAS_USERNAME`}}",
+    "atlas_name": "{{env `ATLAS_NAME`}}",
+    "vmmem": "512",
+    "vmvcpus": "1"
+  },
+  "builders": [
+    {
+      "vm_name": "packer-centos67-vmwiso",
+      "type": "vmware-iso",
+      "communicator": "ssh",
+      "boot_command": [
+        "<tab> text ks=http://{{ .HTTPIP }}:{{ .HTTPPort }}/ks.cfg<enter><wait>"
+      ],
+      "boot_wait": "10s",
+      "disk_size": "20480",
+      "disk_type_id": "1",
+      "guest_os_type": "centos-64",
+      "headless": "false",
+      "http_directory": "scripts",
+      "iso_url": "http://mirror.ox.ac.uk/sites/mirror.centos.org/6.7/isos/x86_64/CentOS-6.7-x86_64-minimal.iso",
+      "iso_checksum_type": "none",
+      "ssh_username": "vagrant",
+      "ssh_password": "vagrant",
+      "ssh_port": "22",
+      "ssh_wait_timeout": "10000s",
+      "shutdown_command": "sudo -S shutdown -P now",
+      "shutdown_timeout": "2m",
+      "tools_upload_flavor": "linux",
+      "version": "9",
+      "vmx_data": {
+        "memsize": "{{user `vmmem`}}",
+        "numvcpus": "{{user `vmvcpus`}}",
+        "cpuid.coresPerSocket": "1"
+      }
+    }
+  ],
+  "provisioners": [
+    {
+      "type": "ansible-local",
+  	  "playbook_file": "centos67.yml"
+    }
+  ],
+  "post-processors": [
+    [{
+      "type": "vagrant",
+      "keep_input_artifact": false,
+      "override": {
+        "vmware": {
+          "output": "centos-6-7-x64-vmware.box"
+        }
+      }
+    },
+    {
+      "type": "atlas",
+      "only": ["vmware-iso"],
+      "artifact": "{{user `atlas_username`}}/{{user `atlas_name`}}",
+      "artifact_type": "vagrant.box",
+      "metadata": {
+      "provider": "vmware_desktop",
+      "version": "0.1.1"
+      }
+    }]
+  ]
+}
