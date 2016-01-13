@@ -61,16 +61,6 @@
           "output": "centos-6-7-x64-vmware.box"
         }
       }
-    },
-    {
-      "type": "atlas",
-      "only": ["vmware-iso"],
-      "artifact": "{{user `atlas_username`}}/{{user `atlas_name`}}",
-      "artifact_type": "vagrant.box",
-      "metadata": {
-      "provider": "vmware_desktop",
-      "version": "0.1.1"
-      }
     }]
   ]
 }
