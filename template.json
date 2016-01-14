@@ -71,6 +71,7 @@
       "metadata": {
       "provider": "vmware_desktop",
       "version": "0.1.2"
+      "created_at": "{{timestamp}}"
       }
     }]
   ]
