@@ -1,6 +1,6 @@
 {
   "description": "DS / Vagrant / CentOS 6.7",
-  "_comment": "This builds a CentOS67 box from scratch using the vmware-iso provider.",
+  "_comment": "This builds a CentOS67 box from scratch using the vmware-iso and virtualbox providers.",
   "push": {
     "name": "",
     "vcs": false,
@@ -13,24 +13,54 @@
     "atlas_username": "{{env `ATLAS_USERNAME`}}",
     "atlas_name": "{{env `ATLAS_NAME`}}",
     "vmmem": "512",
-    "vmvcpus": "1"
+    "vmvcpus": "1",
+    "isodownloadurl": "http://mirror.ox.ac.uk/sites/mirror.centos.org/6.7/isos/x86_64/CentOS-6.7-x86_64-minimal.iso"
   },
   "builders": [
     {
-      "vm_name": "packer-centos67-vmwiso",
+      "type": "virtualbox-iso",
+      "vm_name": "vagrant-centos67-vboxiso",
+      "guest_os_type": "RedHat_64",
+      "headless": "false",
+      "iso_url": "{{user `isodownloadurl`}}",
+      "iso_checksum_type": "none",
+      "http_directory": "scripts",
+      "boot_command": [
+        "<tab> text ks=http://{{ .HTTPIP }}:{{ .HTTPPort }}/ks.cfg<enter><wait>"
+      ],
+      "boot_wait": "10s",
+      "hard_drive_interface": "ide",
+      "disk_size": 40520,
+      "format": "ova",
+      "ssh_username": "vagrant",
+      "ssh_password": "vagrant",
+      "ssh_port": 22,
+      "ssh_wait_timeout": "10000s",
+      "shutdown_command": "sudo -S shutdown -P now",
+      "shutdown_timeout": "2m",
+      "guest_additions_mode": "upload",
+      "guest_additions_path": "VBoxGuestAdditions_{{.Version}}.iso",
+      "virtualbox_version_file": ".vbox_version",
+      "vboxmanage": [
+        [ "modifyvm", "{{.Name}}", "--memory", "{{user `vmmem`}}" ],
+        [ "modifyvm", "{{.Name}}", "--cpus", "{{user `vmcpus`}}" ]
+      ]
+    },
+    {
       "type": "vmware-iso",
-      "communicator": "ssh",
+      "vm_name": "vagrant-centos67-vmwiso",
+      "guest_os_type": "centos-64",
+      "headless": "false",
+      "iso_url": "{{user `isodownloadurl`}}",
+      "iso_checksum_type": "none",
+      "http_directory": "scripts",
       "boot_command": [
         "<tab> text ks=http://{{ .HTTPIP }}:{{ .HTTPPort }}/ks.cfg<enter><wait>"
       ],
       "boot_wait": "10s",
       "disk_size": "20480",
       "disk_type_id": "1",
-      "guest_os_type": "centos-64",
-      "headless": "false",
-      "http_directory": "scripts",
-      "iso_url": "http://mirror.ox.ac.uk/sites/mirror.centos.org/6.7/isos/x86_64/CentOS-6.7-x86_64-minimal.iso",
-      "iso_checksum_type": "none",
+      "communicator": "ssh",
       "ssh_username": "vagrant",
       "ssh_password": "vagrant",
       "ssh_port": "22",
@@ -58,6 +88,9 @@
       "keep_input_artifact": false,
       "vagrantfile_template": "./Vagrantfile.template",
       "override": {
+        "virtualbox": {
+          "output": "centos-6-7-x64-virtualbox.box"
+        },
         "vmware": {
           "output": "centos-6-7-x64-vmware.box"
         }
@@ -70,7 +103,7 @@
       "artifact_type": "vagrant.box",
       "metadata": {
       "provider": "vmware_desktop",
-      "version": "0.1.3",
+      "version": "0.2.1",
       "created_at": "{{timestamp}}"
       }
     }]
