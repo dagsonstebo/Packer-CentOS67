@@ -72,7 +72,9 @@
       "vmx_data": {
         "memsize": "{{user `vmmem`}}",
         "numvcpus": "{{user `vmvcpus`}}",
-        "cpuid.coresPerSocket": "1"
+        "cpuid.coresPerSocket": "1",
+		"ethernet1.connectionType": "custom",  
+		"ethernet1.vnet": "vmnet2" 
       }
     }
   ],
