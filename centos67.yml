@@ -62,22 +62,27 @@
     
     - name: Mount VMWare tools
       mount: name=/mnt/vmware src=/home/vagrant/linux.iso fstype=iso9660 opts=loop state=mounted
+      when: ansible_product_name == "VMware Virtual Platform"
       ignore_errors: yes
-
+      
     - name: Extract VMWare tools
       shell: cd /tmp && tar xzf /mnt/vmware/VMwareTools-*.tar.gz
+      when: ansible_product_name == "VMware Virtual Platform"
       ignore_errors: yes
       
     - name: Umount VMWare tools
       mount: name=/mnt/vmware src=/home/vagrant/linux.iso fstype=iso9660 opts=loop state=unmounted
+      when: ansible_product_name == "VMware Virtual Platform"
       ignore_errors: yes
 
     - name: Install VMWare tools
       shell: /tmp/vmware-tools-distrib/vmware-install.pl -d
+      when: ansible_product_name == "VMware Virtual Platform"
       ignore_errors: yes
       
     - name: Post tools installation housekeeping
       file: path=/tmp/vmware-tools-distrib state=absent
+      when: ansible_product_name == "VMware Virtual Platform"
       ignore_errors: yes
       
     - name: Find VirtualBox additions iso
