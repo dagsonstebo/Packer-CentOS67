@@ -10,7 +10,7 @@
     ]
   },
   "variables": {
-  	"build_version": "0.4.4",
+  	"build_version": "0.5.0",
     "atlas_username": "{{env `ATLAS_USERNAME`}}",
     "atlas_name": "{{env `ATLAS_NAME`}}",
     "vmmem": "512",
@@ -73,9 +73,7 @@
       "vmx_data": {
         "memsize": "{{user `vmmem`}}",
         "numvcpus": "{{user `vmvcpus`}}",
-        "cpuid.coresPerSocket": "1",
-		"ethernet1.present": "TRUE",
-		"ethernet1.connectionType": "nat"
+        "cpuid.coresPerSocket": "1"
       }
     }
   ],
